@@ -1,0 +1,107 @@
+   // Funcion de cambiar seccion 
+    const targets = document.querySelectorAll('[data-target]')
+    const content = document.querySelectorAll('[data-content]')
+
+    targets.forEach(target => {
+
+	target.addEventListener('click', () => {
+		 content.forEach(c => {
+		 	c.classList.remove('active')
+		 })
+		const t = document.querySelector(target.dataset.target)
+		t.classList.add('active')
+	    })
+    })
+
+   
+    // Datos de Fecha
+    const dateNumber = document.getElementById('dateNumber');
+    const dateText = document.getElementById('dateText');
+    const dateMonth = document.getElementById('dateMonth');
+    const dateYear = document.getElementById('dateYear');
+
+    const tasksContainer = document.getElementById('tasksContainer');
+
+    const setDate = () => {
+    const date = new Date();
+         dateNumber.textContent = date.toLocaleString('es', { day: 'numeric' });
+         dateText.textContent = date.toLocaleString('es', { weekday: 'long' });
+         dateMonth.textContent = date.toLocaleString('es', { month: 'short' });
+         dateYear.textContent = date.toLocaleString('es', { year: 'numeric' });
+     };
+     setDate();
+
+
+     // Añadir e eliminar Tarea
+     const inputs = document.getElementById("inputs");
+     const input_time = document.getElementById("input_time");
+     const input_time2 = document.getElementById("input_time");
+     const btn_todo = document.getElementById("btn_todo");
+     const container_todo = document.querySelector(".container_todo");
+ 
+     const guardarTareas = () => {
+         // guardo el input dentro de un objeto
+         const tarea = {
+             inputs_tarea: inputs.value,
+             input_time_tarea: input_time.value,
+             input_time2_tarea: input_time2.value
+         }
+ 
+ 
+         if (localStorage.getItem("tareas") === null) {
+             let arreglo = [];
+             arreglo.push(tarea);
+             localStorage.setItem("tareas", JSON.stringify(arreglo));
+         } else {
+             let obtener = JSON.parse(localStorage.getItem("tareas"));
+             obtener.push(tarea);
+             localStorage.setItem("tareas", JSON.stringify(obtener));
+         }
+         mostrarTareas();
+         inputs.value = "";
+         input_time.value = "";
+         input_time2.value = "";
+     }
+ 
+     const mostrarTareas = () => {
+ 
+         let tareas_obtenidas = JSON.parse(localStorage.getItem("tareas"));
+         container_todo.innerHTML = "";
+ 
+         for (let i = 0; i < tareas_obtenidas.length; i++) {
+             let inputs = tareas_obtenidas[i].inputs_tarea;
+             let input_time = tareas_obtenidas[i].input_time_tarea;
+             let input_time2 = tareas_obtenidas[i].input_time2_tarea;
+ 
+             container_todo.innerHTML += `
+            <div class="container_list">
+            <div class="container_list-1">
+             <input type="checkbox" class="casilla">
+             <p class="actividad">${inputs} de ${input_time} hasta ${input_time}</p>
+            </div>
+            <div class="container_list-btn">
+             <button class="btn-eliminar" onclick="eliminarTareas('${inputs}')" ><i class="fas fa-trash-alt"></i></button>
+            </div>
+            </div>`;
+         }
+     }
+ 
+     const eliminarTareas = (tarea) => {
+         let tareas = JSON.parse(localStorage.getItem("tareas"));
+         for (let i = 0; i < tareas.length; i++) {
+         if (tarea === tareas[i].inputs_tarea) {
+            tareas.splice(i, 1);
+            }
+         }
+         localStorage.setItem("tareas", JSON.stringify(tareas));
+         mostrarTareas();
+     }
+ 
+     // funcionalidad de agregar tarea
+     btn_todo.addEventListener("click", () => {
+         if (inputs.value === "" || inputs.value.trim() === "") {
+            
+         } else {
+             guardarTareas();
+         }
+     });
